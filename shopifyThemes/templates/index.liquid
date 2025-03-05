@@ -61,8 +61,8 @@ Try to create an h2-element, displaying the title of a specific product of your 
 
 
 
-{% comment %}
-<section class="challenge">
+
+{% comment %} <section class="challenge">
 <!--Challenge 2: Filters -->
 
   <!--  
@@ -82,6 +82,11 @@ a.) Assign a new variable that contains a specific product of your choice.
     Then create a div-element and display the product title, by using the variable you've just assigned. 
 -->
 
+{% assign product = all_products['black-leather-bag'] %}
+
+<div>
+  {{ product.title }}
+</div>
 
 
 
@@ -89,7 +94,7 @@ a.) Assign a new variable that contains a specific product of your choice.
 b.) Now use a Liquid Filter to turn every letter of the product title into an upper-case lettter.
 -->
 
-
+{{ product.title | upcase }}
 
 
 
@@ -99,7 +104,9 @@ Use a Filter to properly format the price and display it in the stores' currency
 -->
 
 
-
+<p>
+  {{ product.price | money_with_currency}}
+</p>
 
 
 
@@ -111,8 +118,8 @@ Hint: try to use a media filter called img_url.
 If you don't add any additional parameters to the filter, the displayed image will be small in resolution, but that's okay for now.
 -->
 
-
-
+{% comment %} <img src="{{ product.featured_image | image_url: width: 500, height: 500 }}" alt="{{ product.title }}" width="500" height="500"> {% endcomment %}
+{{ product.featured_image | image_url: width: 500, height: 500 }}
 
 
 
@@ -123,8 +130,9 @@ This time try to use the img_url filter in a way so that the image width is 200p
 !-->
 
 
+{% comment %} <img src="{{ product.featured_image | image_url: width: 200, height: auto }}" alt="{{ product.title }}" width="200" height= "auto"> {% endcomment %}
 
-
+{{ product.featured_image | image_url: width: 200, height: auto }}
   
 
 <br><br><!-- 
@@ -133,6 +141,10 @@ Now we want to actually display both images (the small preview image, and the 20
 Copy your solutions from above try to also add an img_tag filter at the end, to display them.
 -->
 
+
+<img src="{{ product.featured_image | image_url: width: 500, height: 500 }}" alt="{{ product.title }}" width="500" height="500">
+
+<img src="{{ product.featured_image | image_url: width: 200, height: auto }}" alt="{{ product.title }}" width="200" height= "auto">
 
 
 
@@ -162,14 +174,15 @@ To get the correct ID, you may want to take a look at the product object and a p
 This variant object will hold the correct ID.
 --> 
 
-
+<a href="/cart/add?id={{ product.first_available_variant.id}}">
+  Add to cart
+</a>
 
   
   
   
 <!-- End Challenge 2 -->
-</section>
-{% endcomment %}
+</section> {% endcomment %}
 
 
 
@@ -179,7 +192,8 @@ This variant object will hold the correct ID.
 
 
 
-{% comment %}
+
+
 <section class="challenge">
 <!-- Challenge 3: More advanced data output and Logic tags -->
 
@@ -214,7 +228,7 @@ Here are the subtasks:
 
 
 
-{% comment %}
+
 {% assign product = all_products['classic-varsity-top'] %}
 
 {% assign isSoldOut = false %}
@@ -223,31 +237,32 @@ Here are the subtasks:
 {% endif %}
 
 
+<div>{{ product.url }}</div>
 <ul class="grid grid--uniform grid--view-items">
   <li class="grid__item small--one-half medium-up--one-quarter">
     
     <div class="grid-view-item product-card {% if isSoldOut %} grid-view-item--sold-out{% endif %}">
       
       <a class="grid-view-item__link grid-view-item__image-container full-width-link"
-          href="PRODUCT URL">
+          href="https://z-test-developerway-liquid-sandbox-theme.myshopify.com{{ product.url }}">
       </a>
 
       <div class="grid-view-item__image-wrapper product-card__image-wrapper">
         {{ product.featured_image | img_url:'500x500' | img_tag | class: 'grid-view-item__image' }}
       </div>
       
-      <div class="h4 grid-view-item__title product-card__title" aria-hidden="true"> PRODUCT TITLE </div>
+      <div class="h4 grid-view-item__title product-card__title" aria-hidden="true"> {{ product.title }} </div>
 
       <dl class="price price--listing {% if isSoldOut %}price--sold-out{% endif %} ">
         <div class="price__regular">
-          <span class="price-item price-item--regular"> PRODUCT PRICE </span>
+          <span class="price-item price-item--regular"> {{ product.price | money_with_currency}} </span>
         </div>
 
         <div class="price__badges price__badges--listing">
           <span  class="price__badge price__badge--sold-out"} >
             <span>Sold out</span>
           </span>
-        </div>
+        </div> 
         {% unless isSoldOut %}
         <a href="/cart/add?id={{ product.first_available_variant.id }}" class="btn">Quick Add</a>
         {% endunless %}
@@ -257,13 +272,13 @@ Here are the subtasks:
     
   </li>
 </ul>
-{% endcomment %}
+
 
 
 
 <!-- End Challenge 3 -->
 </section>
-{% endcomment %}
+
 
 
 
