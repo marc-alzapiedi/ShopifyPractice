@@ -63,7 +63,7 @@ Try to create an h2-element, displaying the title of a specific product of your 
 
 
 {% comment %} <section class="challenge">
-<!--Challenge 2: Filters -->
+<!--  : Filters -->
 
   <!--  
   {% raw %}
@@ -290,8 +290,8 @@ Here are the subtasks:
 
 
 
-{% comment %}
-<section class="challenge">
+
+{% comment %} <section class="challenge">
 <!--Challenge 4: Arrays and For-Loops-->
 
  
@@ -308,7 +308,7 @@ For example, a collection is usually just an array (list) of different products:
 
 (The first index starts with #0, because historically it was more memory efficient than starting with a #1)
 
-If we want to access a specific  element of the array, we can use square brackets and the element's index.
+If we want to access a specific element of the array, we can use square brackets and the element's index.
 
   {% raw %}
   Example:  {{ my_collection_array[2] }} => glasses
@@ -342,6 +342,22 @@ For this first task, try to access the elements directly, by using their index a
 (As seen in the example above, and not by using a for loop)
 -->
 
+{% assign product = all_products['ocean-blue-shirt'] %}
+
+<ul>
+  <li>
+    {{ product.tags[0] }}
+  </li>
+  <li>
+    {{ product.tags[1] }}
+
+  </li>
+  <li>
+    {{ product.tags[2] }}
+
+  </li>
+</ul>
+
 
 
   
@@ -352,6 +368,18 @@ b.)
 Now try to repeat the exercise above, by using a for-loop.
 (for each tag in the product.tags, render a list item. )
 -->
+
+<ul>
+
+{% for tags in product.tags %}
+
+  <li>
+    {{ tags }}
+  </li>
+
+{% endfor %}
+
+</ul>
 
 
 
@@ -371,7 +399,15 @@ Expected outcome:
 Hint: In Liquid we have access to a variable called: "forloop.index" (which holds the number of the current iteration).
 --> 
 
-  
+  <ul>
+    {% for tag in product.tags %}
+      
+      <li>
+        {{ tag }}, {{ forloop.index }}
+      </li>
+
+    {% endfor %}
+  </ul>
 
 
   
@@ -381,9 +417,35 @@ d.) Adjust your for-loop, to render the "limited" tag in red-text color.
     hint: You can use inline CSS and an if-condition based on the tag name. 
 -->
 
-  
+<style>
+  .red-text{
+    color: red;
+  }
+
+  .normal-text{
+  color: black;
+  }
+</style>
+
+<ul>
+
+  {% for tag in product.tags %}
 
 
+    {% if tag == 'limited' %}
+      {% assign text_class = 'red-text' %}
+    {% elsif tag != 'limited' %}
+      {% assign text_class = 'normal-text' %}
+    {% endif %}
+
+    <li class= {{ text_class }}>
+      {{ tag }}
+    </li>
+
+  {% endfor %}
+
+
+</ul>
   
 
 
@@ -393,13 +455,15 @@ d.) Adjust your for-loop, to render the "limited" tag in red-text color.
 e.) Create an h2-element and use a liquid filter to display the size of the array (number of elements).
 -->
 
-  
+  <h2>
+    {{ product.tags |  size }}
+  </h2>
   
   
 <!-- End Challenge 4 -->
-</section>
+</section> {% endcomment %}
 
-{% endcomment %}
+
 
 
 
