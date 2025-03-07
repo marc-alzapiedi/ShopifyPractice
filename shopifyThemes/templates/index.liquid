@@ -194,7 +194,7 @@ This variant object will hold the correct ID.
 
 
 
-<section class="challenge">
+{% comment %} <section class="challenge">
 <!-- Challenge 3: More advanced data output and Logic tags -->
 
 <!--
@@ -231,17 +231,21 @@ Here are the subtasks:
 
 {% assign product = all_products['classic-varsity-top'] %}
 
-{% assign isSoldOut = false %}
-{% if ... %}
-  {% assign isSoldOut = true %}
+{% assign is_sold_out = false %}
+{% if product.variants.first.inventory_quantity == 0 %}
+  {% assign is_sold_out = true %}
 {% endif %}
 
+{% comment %} <h1>
+  {{ product.variants.first.inventory_quantity }}
+  {{ is_sold_out }}
+</h1> {% endcomment %}
 
 <div>{{ product.url }}</div>
 <ul class="grid grid--uniform grid--view-items">
   <li class="grid__item small--one-half medium-up--one-quarter">
     
-    <div class="grid-view-item product-card {% if isSoldOut %} grid-view-item--sold-out{% endif %}">
+    <div class="grid-view-item product-card {% if is_sold_out %} grid-view-item--sold-out{% endif %}">
       
       <a class="grid-view-item__link grid-view-item__image-container full-width-link"
           href="https://z-test-developerway-liquid-sandbox-theme.myshopify.com{{ product.url }}">
@@ -253,7 +257,7 @@ Here are the subtasks:
       
       <div class="h4 grid-view-item__title product-card__title" aria-hidden="true"> {{ product.title }} </div>
 
-      <dl class="price price--listing {% if isSoldOut %}price--sold-out{% endif %} ">
+      <dl class="price price--listing {% if is_sold_out %}price--sold-out{% endif %} ">
         <div class="price__regular">
           <span class="price-item price-item--regular"> {{ product.price | money_with_currency}} </span>
         </div>
@@ -277,7 +281,7 @@ Here are the subtasks:
 
 
 <!-- End Challenge 3 -->
-</section>
+</section> {% endcomment %}
 
 
 
