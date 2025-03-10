@@ -902,14 +902,23 @@ Then render the 'product-component' snippet with the denim-top product-object as
 
   {% assign product = all_products['dark-denim-top'] %}
 
-  {% render 'product-component', variable: product %}
+
+  {% render 'product-component', product: product %}
 
 <!-- 
 d) Let's repeat the same in a for-loop. 
 Inside the unordered list, try to render a 'product-component' for each product in the Women's collection.
 -->
 
+  {% assign product = collections['women'].products %}
+
   <ul class="grid grid--uniform grid--view-items">
+
+    {% for products in product %}
+      <li>
+        {% render 'product-component', product: products %}
+      </li>
+    {% endfor %}
     
 
   
@@ -929,7 +938,24 @@ Inside the for-loop, use a Liquid-Switch-Statemet to check the current element, 
 To confirm your solution works, you can re-order the elements in the section list, or add an additional gallery at the end.
 -->
 
-{% assign section_list = "gallery,testimonials,image-with-text"%}
+{% assign section_list = "testimonials,gallery,image-with-text"%}
+
+{% assign section_array = section_list | split: ',' %}
+
+{% for section in section_array %}
+  {% case section %}
+    {% when 'gallery' %}
+      {% render 'gallery' %}
+
+    {% when 'testimonials' %}
+      {% render 'testimonials' %}
+
+    {% when 'image-with-text' %}
+      {% render 'image-with-text' %}
+
+    {% endcase %}
+
+{% endfor %}
 
 
 
