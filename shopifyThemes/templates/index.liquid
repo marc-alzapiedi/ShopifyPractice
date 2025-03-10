@@ -472,8 +472,8 @@ e.) Create an h2-element and use a liquid filter to display the size of the arra
 
 
 
-{% comment %}
-<section class="challenge">
+
+{% comment %} <section class="challenge">
 <!--Challenge 5: For-Loops -->
 
   
@@ -488,10 +488,27 @@ by using the global collections object: collections['women']
 Also note that collection object might have more properties than just the contained products. (title, description, products, image, id, etc...)
 -->
 
+{% comment %} <h1>
+  {% comment %} {{ collections['women'] | json }} {% endcomment %}
+  {% comment %} {{ collections['women'].products | json}} {% endcomment %}
+  {{ collections['women'].products[0].title }}
+</h1> {% endcomment %}
+
+{% assign product = collections['women'].products %}
+
+<ul>
+
+  {% for products in product %}
+    <li>
+      {{ products.title }}
+    </li>
+  {% endfor %}
 
 
+</ul>
 
 
+<br>
   
 <!-- 
 b.) Now also append the current iteration index to the output
@@ -502,22 +519,58 @@ Expected result:
 ...
 -->
 
-  
+  <ul>
 
-  
+    {% for products in product %}
+      <li>
+        {{ products.title }}, {{ forloop.index }}
+      </li>
+    {% endfor %}
+
+
+  </ul>
+
+  <br>
 <!-- 
 c.) 
 Imagine we only want to display the first 8 products in that collection.
 Try to cancel your iteration after the 8th element using the "break" keyword.
 -->
-  
 
+<ul>
+
+
+  {% for products in product %}
+    {% if forloop.index == 9 %}
+      {% break %}
+    {% endif %}
+    <li>
+      {{ products.title }}
+    </li>
+  {% endfor %}
+
+</ul>
+  
+<br>
   
 <!-- 
 d.) Adjust your for-loop to display all products in the collection that are available
 -->
 
 
+
+<ul>
+
+  {% for products in product %}
+    {% if products.variants.first.inventory_quantity != 0 %}
+       
+    <li>
+      {{ products.title }}, {{ products.variants.first.inventory_quantity }}
+    </li>
+  {% endif %}
+
+  {% endfor %}
+</ul>
   
 
 <!-- 
@@ -528,47 +581,51 @@ e.)
   Then also implement logic to skip all products, that are currently unavailable. 
 -->
   
-
-  {% comment %}
   <ul class="grid grid--uniform grid--view-items">
+    {% for products in product %}
+
+      {% if products.available == false %}
+        {% continue %}
+      {% endif %}
+
+      <li class="grid__item small--one-half medium-up--one-quarter" style="max-width:20%">
+          <div class="grid-view-item product-card {% unless products.available %} grid-view-item--sold-out{% endunless %}">
+        <a class="grid-view-item__link grid-view-item__image-container full-width-link"
+          href="{{ products.url }}">
+        </a>
   
-    <li class="grid__item small--one-half medium-up--one-quarter" style="max-width:20%">
-        <div class="grid-view-item product-card {% unless product.available %} grid-view-item--sold-out{% endunless %}">
-      <a class="grid-view-item__link grid-view-item__image-container full-width-link"
-        href="{{ product.url }}">
-      </a>
-
-      <div class="grid-view-item__image-wrapper product-card__image-wrapper">
-        {{ product.featured_image | img_url:'500x500' | img_tag | class: 'grid-view-item__image' }}
+        <div class="grid-view-item__image-wrapper product-card__image-wrapper">
+          {{ products.featured_image | img_url:'500x500' | img_tag | class: 'grid-view-item__image' }}
+        </div>
+        
+        <div class="h4 grid-view-item__title product-card__title" aria-hidden="true"> {{ products.title }} </div>
+  
+        <dl class="price price--listing {% unless products.available %} price--sold-out{% endunless %} ">
+          <div class="price__regular">
+            <span class="price-item price-item--regular"> {{ products.price | money }} </span>
+          </div>
+  
+          <div class="price__badges price__badges--listing">
+            <span  class="price__badge price__badge--sold-out"} >
+              <span>Sold out</span>
+            </span>
+          </div>
+          {% if products.available %}
+          <a href="/cart/add?id={{ products.first_available_variant.id }}" class="btn">Quick Add</a>
+          {% endif %}
+        </dl>
       </div>
-      
-      <div class="h4 grid-view-item__title product-card__title" aria-hidden="true"> {{ product.title }} </div>
-
-      <dl class="price price--listing {% unless product.available %} price--sold-out{% endunless %} ">
-        <div class="price__regular">
-          <span class="price-item price-item--regular"> {{ product.price | money }} </span>
-        </div>
-
-        <div class="price__badges price__badges--listing">
-          <span  class="price__badge price__badge--sold-out"} >
-            <span>Sold out</span>
-          </span>
-        </div>
-        {% if product.available %}
-        <a href="/cart/add?id={{ product.first_available_variant.id }}" class="btn">Quick Add</a>
-        {% endif %}
-      </dl>
-    </div>
-  </li>
+    </li>
+   {% endfor %}
+  
   
 </ul>
-{% endcomment %}
+
 
 
   
 <!-- End Challenge 5 -->
-</section>
-{% endcomment %}
+</section> {% endcomment %}
 
 
 
@@ -577,8 +634,9 @@ e.)
 
 
 
-{% comment %}
-<section class="challenge">
+
+
+{% comment %} <section class="challenge">
 <!-- Challenge 6 - Working with Texts -->
 
 
@@ -589,7 +647,10 @@ a) Assign a new variable called 'extended_product_list', which is based on the i
    To confirm your solution, put out your new variable to the front-end.
 -->
 
-
+{% assign extended_product_list = product_list | append: ', shoes'  %}
+<h1>
+  {{ extended_product_list }}
+</h1>
   
 <br><!--
 b)  Try to assign a 3rd variable called 'new_product_list', which is based on your extended_product_list.
@@ -597,6 +658,10 @@ b)  Try to assign a 3rd variable called 'new_product_list', which is based on yo
     To confirm it worked, also display the 'new_product_list' on the front-end.
 --> 
 
+{% assign new_product_list = extended_product_list | replace: 'pullover', 'sweater' %}
+<h1>
+  {{ new_product_list }}
+</h1>
 
 <!--
 c) Down below, we find a bit of customer data.
@@ -615,17 +680,19 @@ c) Down below, we find a bit of customer data.
 
 --> 
 
-{% comment %}
+  {% assign customer_data = 'John Doe, 28 years, repeated-customer, order-value:100, city:NYC' %}
+
   
   {% comment%} check if the customer is a repeated-customer {% endcomment%}
   {% assign is_repeated_customer = false %}
-  {% if customer_data ... %}
+  {% if customer_data contains 'repeated-customer' %}
    {% assign is_repeated_customer = true %}
   {% endif %}
 
+
   {% comment%} check if the customer lives in NYC {% endcomment%}
   {% assign lives_in_nyc = false %}
-  {% if customer_data ... %}
+  {% if customer_data contains 'city:NYC' %}
    {% assign lives_in_nyc = true %}
   {% endif %}
   
@@ -633,13 +700,13 @@ c) Down below, we find a bit of customer data.
   <div class="order confirmation">
     <h1> Order complete! </h1>
       
-    {% if is_repeated_customer and lives_in_nyc %} 
+    {% if is_repeated_customer == true and lives_in_nyc == true %} 
     <p> Thank you for being a loyal customer! Here is a 10% discount code for your next purchase: sale10.</p>
     {% endif %}
     
   </div>
 
-{% endcomment %}
+
   
 
 
@@ -663,8 +730,15 @@ To confirm that the tags-variable is indeed an array,
 write a for loop that iterates over the tags and puts them out to the front-end. (in a list)
 --> 
 
+<ul>
 
+  {% for tag in tags %}
+    <li>
+      {{ tag }}
+    </li>
+  {% endfor %}
 
+</ul>
   
   
 
@@ -684,21 +758,34 @@ e)
   
 -->
 
-{% comment %}
+  {% assign social_link_data  = 'instagram_url:https://instagram.com,facebook_url:https://facebook.com,tiktok_url:https://tiktok.com' %}
+
+{% assign links = social_link_data| split: ',' %}
+
+
+<div class="product-card"> 
+  <h2 class="h2 product-title"> Pullover </h2>
+  <h3 class="h3 limited time offer"> limited time offer!</h3>
+  <h3 class="product-price"> $15 </h3>
   
-  <div class="product-card"> 
-   <h2 class="h2 product-title"> Pullover </h2>
-   <h3 class="h3 limited time offer"> limited time offer!</h3>
-   <h3 class="product-price"> $15 </h3>
+  {% for link in links %}
+    {% if link contains 'facebook' %}
+      {% assign facebook_link = link | remove: "facebook_url:" %}
+  
+      <a href="{{ facebook_link }}">
+        See on Facebook
+      </a>
+    {% endif %}
+  
     
-  </div>
-{% endcomment %}
+  {% endfor %}
+</div>
+
   
 
   
 <!--End Challenge 6 -->
-</section>
-{% endcomment %}
+</section> {% endcomment %}
 
 
 
@@ -709,8 +796,9 @@ e)
 
 
 
-{% comment %}
-<section class="challenge">
+
+
+{% comment %} <section class="challenge">
 <!-- Challenge 7 : Debugging-->
 
 <!-- 
@@ -737,25 +825,28 @@ We can use the product with the handle "classic-leather-jacket" as an example.
   {% assign product = all_products['classic-leather-jacket'] %}
   {% assign has_instagram_link = false %}
 
+  {% comment %} <h1>
+    {{ product.tags }}
+  </h1> {% endcomment %}
   
   {% for tag in product.tags %}
   
-    {% if tag == 'instagram_link' %}
+    {% if tag contains 'instagram_link' %}
 	
       {% assign has_instagram_link = true %}
-  	  {% assign link = tag | split: ':'  %}
+  	  {% assign link = tag | remove: 'instagram_link:'  %}
   	   
     {% endif%}
   
   {% endfor %}
 
-  
+
   <div class="product-gallery">
-    <img src="{{ product.featured_image }}" />
+    <img src="{{ product.featured_image | image_url: width: 200, height: 200}}" alt="{{ product.title }}"  width="auto" height="auto">
     <h6>{{product.title}}</h6>
   
     {% if has_instagram_link %}
-    <a class="btn" href="{{link}}"> See on Instagram </a>
+    <a class="btn" href="{{link}}" target="blank"> See on Instagram </a>
     {% endif %}
   </div>
 
@@ -763,8 +854,7 @@ We can use the product with the handle "classic-leather-jacket" as an example.
   
   
 <!-- End Challenge 7 -->
-</section>
-{% endcomment %}
+</section> {% endcomment %}
 
 
 
@@ -775,7 +865,8 @@ We can use the product with the handle "classic-leather-jacket" as an example.
 
 
 
-{% comment %}
+
+
 <section class="challenge">
 <!-- Challenge 8:  Liquid Render Tags -->
 
@@ -786,7 +877,7 @@ The snippet folder of this Sandbox theme contains a file called 'image-with-text
 Try to render the snippet down below.
 -->
 
-
+{% render 'image-with-text' %}
 
 
 
@@ -797,7 +888,7 @@ Try to render the snippet again, but this time set the orientation to 'reverse'.
 
 
  
-
+{% render 'image-with-text', orientation: 'reverse' %}
 
 <!-- 
 c)
@@ -809,8 +900,9 @@ Asssign a new variable, holding the 'dark-denim-top' product.
 Then render the 'product-component' snippet with the denim-top product-object as an input. 
 -->
 
-  
-  
+  {% assign product = all_products['dark-denim-top'] %}
+
+  {% render 'product-component', variable: product %}
 
 <!-- 
 d) Let's repeat the same in a for-loop. 
@@ -843,7 +935,7 @@ To confirm your solution works, you can re-order the elements in the section lis
 
 
 </section>
-{% endcomment %}
+
 
 
 
